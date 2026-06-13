@@ -1,0 +1,30 @@
+body {
+  height: 100vh;
+  background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("/pictures/windowhouse.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.nav-link {
+  padding: 0.25rem 0;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0.8rem;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover{
+  color: rgba(255, 255, 255, 0.5);
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-link.active {
+  color: rgb(255, 255, 255);
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-secondary, .btn-secondary:hover{
+  color: black;
+  text-shadow: none;
+}

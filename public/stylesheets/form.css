@@ -1,0 +1,25 @@
+/* Login and Register Page Custom Styles */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 75vh;
+}
+
+
+.login-bg-image {
+  background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.login-card-custom {
+  width: 100%;
+  max-width: 450px;
+}
+
+.input-rounded, 
+.btn-rounded {
+  border-radius: 8px;
+}
