@@ -1,0 +1,167 @@
+<% layout('/layout/boilerplate') %>
+<div class="row mb-4 pb-2 border-bottom">
+  <div class="col-12 col-md-8">
+    <div id="cluster-map"></div>
+  </div>
+  <div class="col-12 col-md-4 mt-4 mt-md-0">
+    <div class="mb-3">
+      <h1 class="mb-1">Explore Next Journey</h1>
+      <div class="mb-2">
+        <p class="text-muted mb-0 d-inline">Find incredible destinations worldwide.</p> <i class="bi bi-globe-americas"></i>
+      </div>
+      <a href="/campgrounds/new" class="btn btn-outline-primary">
+        Add a Listing
+      </a>
+      <p class="text-muted mt-3 mb-1">
+        <%= totalCampgrounds %> results found
+      </p>
+      <p class="text-muted small mt-2">
+        Browse by location, price, and rating.
+      </p>
+    </div>
+  </div>
+</div>
+<div class="bg-light rounded-4 p-3 p-md-4 mb-4">
+  <div class="d-flex mb-3">
+    <div>
+      <h2 class="h5 mb-1">Filter Spaces</h2>
+      <p class="text-muted mb-0 small">
+        Search by name, location, price, or rating.
+      </p>
+    </div>
+  </div>
+  <form action="/campgrounds" method="GET" class="row g-3 align-items-end">
+    <div class="form-group col-12 col-md-4 col-lg-4">
+      <div class="input-group">
+        <span class="input-group-text bg-white" id="search-addon">
+          <i class="bi bi-search"></i>
+        </span>
+        <input 
+          class="form-control" 
+          name="search" 
+          id="search" 
+          placeholder="Destination or city name" 
+          value="<%= search || '' %>"
+          aria-label="Search destinations"
+          aria-describedby="search-addon"
+        >
+      </div>
+    </div>
+
+    <div class="form-group col-6 col-md-4 col-lg-2">
+      <div class="input-group">
+        <span class="input-group-text bg-white" id="min-price-addon">Min $</span>
+        <input 
+          class="form-control" 
+          type="number" 
+          name="minPrice" 
+          id="minPrice" 
+          min="0"
+          placeholder="0"
+          value="<%= minPrice || '' %>"
+          aria-label="Minimum price"
+          aria-describedby="min-price-addon"
+        >
+      </div>
+    </div>
+
+    <div class="form-group col-6 col-md-4 col-lg-2">
+      <div class="input-group">
+        <span class="input-group-text bg-white" id="max-price-addon">Max $</span>
+        <input 
+          class="form-control" 
+          type="number" 
+          name="maxPrice" 
+          id="maxPrice" 
+          min="0"
+          placeholder="100"
+          value="<%= maxPrice || '' %>"
+          aria-label="Maximum price"
+          aria-describedby="max-price-addon"
+        >
+      </div>
+    </div>
+
+    <div class="form-group col-12 col-md-6 col-lg-2">
+      <select class="form-select" name="sort" aria-label="Sort listings option">
+        <option value="" <%= !sort ? 'selected' : '' %>>Default</option>
+        <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Price low to high</option>
+        <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Price high to low</option>
+        <option value="rating_desc" <%= sort === 'rating_desc' ? 'selected' : '' %>>Highest rated</option>
+      </select>
+    </div>
+
+    <div class="col-6 col-md-3 col-lg-1">
+      <button class="btn btn-primary w-100">
+        Filter
+      </button>
+    </div>
+
+    <div class="col-6 col-md-3 col-lg-1">
+      <a href="/campgrounds" class="btn btn-outline-secondary w-100">
+        Reset
+      </a>
+    </div>
+  </form>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0">Available Stays</h2>
+  <small class="text-muted fw-semibold"><%= page %> of <%= totalPages %> results</small>
+</div>
+<div class="row g-3">
+  <% for (let campground of campgrounds) {%>
+    <%- include('../partials/campgroundCard', { campground, favoriteIds }) %>
+  <% } %>
+  <% if (campgrounds.length === 0) {%>
+    <div class="p-3">
+      <div class="d-flex justify-content-between">
+        <h3>No available campgrounds</h3>
+       <a href="/campgrounds" class="btn btn-outline-secondary">
+        Clear filters
+      </a>
+      </div>
+      <p class="text-muted">Try to change the search or price range</p>
+    </div>
+  <% } %>
+</div>
+
+<% 
+  const startPage = Math.max(1, page - 2);
+  const endPage = Math.min(totalPages, page + 2);
+%>
+
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+      <a class="page-link" href="/campgrounds?<%= queryString ? queryString + '&': ''%>page=<%= page - 1 %>">
+        Previous
+      </a>
+    </li>
+    <% for (let i = startPage; i <= endPage; i++) {%>
+        <li class="page-item <%= page === i  ? 'active' : '' %>">
+          <a class="page-link" href="/campgrounds?<%= queryString ? queryString + '&': ''%>page=<%= i %>"><%= i %></a>
+        </li>
+    <% } %>
+    <li class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+      <a class="page-link" href="/campgrounds?<%= queryString ? queryString + '&': ''%>page=<%= page + 1 %>">
+        Next
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<%- "<script>" %>
+const maptilerApiKey = "<%- process.env.MAPTILER_API_KEY %>";
+const campgrounds = {
+  type: "FeatureCollection",
+  features: <%- JSON.stringify(
+    mapCampgrounds.map(campground => ({
+      type: "Feature",
+      geometry: campground.geometry,
+      properties: { popUpMarkup: campground?.properties?.popUpMarkup }
+    }))
+  ) %>
+};
+<%- "</script>" %>
+
+<script src="/javascripts/clusterMap.js"></script>

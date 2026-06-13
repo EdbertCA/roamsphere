@@ -1,0 +1,45 @@
+<div class="col-12 col-md-6 col-lg-4">
+  <div class="card shadow-sm mb-3 campground-card">
+    <img class="card-img-top index-card-img" alt="<%= campground.title %>" src="<%= campground.images[0].url %>">
+    <div class="card-body d-flex flex-column p-3">
+      <div class="d-flex justify-content-between align-items-start gap-2">
+        <h3 class="card-title mb-1">
+          <%= campground.title %>
+        </h3>
+
+        <% const isFavorited = favoriteIds.includes(campground._id.toString()); %>
+
+        <% if (currUser) { %>
+          <% if (isFavorited) { %>
+            <i class="bi bi-heart-fill text-danger fs-5"></i>
+          <% } else { %>
+            <i class="bi bi-heart text-muted fs-5"></i>
+          <% } %>
+        <% } %>
+      </div>
+      <p class="card-text text-muted mb-2">
+        <i class="bi bi-geo-alt"></i>
+        <%= campground.location %>
+      </p>
+      <div class="d-flex flex-row justify-content-between">
+        <p class="card-text fw-medium mb-3">
+          $<%= campground.price %> / night
+        </p>
+        <% if (campground.reviews.length) { %>
+        <p class="card-text fw-medium mb-3">
+          <i class="bi bi-star-fill text-warning me-1"></i> <%= campground.avgRating.toFixed(1) %> (<%= campground.reviews.length %> reviews)
+        </p>
+        <% } else { %>
+          <p class="card-text fw-medium mb-3">
+            No reviews yet
+          </p>
+        <% } %>
+      </div>
+      <a 
+        href="/campgrounds/<%= campground._id %>" 
+        class="btn btn-outline-secondary">
+        View Details
+      </a>
+    </div>
+  </div>
+</div>
